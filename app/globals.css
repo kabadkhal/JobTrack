@@ -1,26 +1,336 @@
 @import "tailwindcss";
 
+/* =========================================================
+   JOBTRACK DESIGN SYSTEM
+   ========================================================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+
+  --background: #05060a;
+  --foreground: #ffffff;
+
+  --glass: rgba(255, 255, 255, 0.075);
+  --glass-hover: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.58);
+  --text-muted: rgba(255, 255, 255, 0.38);
+
+  --accent: #8b5cf6;
+  --accent-soft: rgba(139, 92, 246, 0.17);
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #fb7185;
+
+  --shadow:
+    0 25px 80px rgba(0, 0, 0, 0.42);
+
+  --glow:
+    0 0 100px rgba(139, 92, 246, 0.18);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* =========================================================
+   LIGHT THEME
+   ========================================================= */
+
+html.light {
+  color-scheme: light;
+
+  --background: #f5f3ff;
+  --foreground: #171421;
+
+  --glass: rgba(255, 255, 255, 0.58);
+  --glass-hover: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(91, 72, 130, 0.16);
+  --glass-highlight: rgba(255, 255, 255, 0.75);
+
+  --text-primary: #171421;
+  --text-secondary: rgba(23, 20, 33, 0.62);
+  --text-muted: rgba(23, 20, 33, 0.42);
+
+  --accent: #7c3aed;
+  --accent-soft: rgba(124, 58, 237, 0.11);
+
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #e11d48;
+
+  --shadow:
+    0 25px 70px rgba(74, 56, 110, 0.13);
+
+  --glow:
+    0 0 100px rgba(124, 58, 237, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
+
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  overflow-x: hidden;
+
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+/* =========================================================
+   PREMIUM BACKGROUND
+   ========================================================= */
+
+body::before {
+  content: "";
+
+  position: fixed;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: -1;
+
+  background:
+    radial-gradient(
+      circle at 8% 12%,
+      rgba(139, 92, 246, 0.20),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 92% 82%,
+      rgba(59, 130, 246, 0.14),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(139, 92, 246, 0.06),
+      transparent 35%
+    );
+}
+
+/* =========================================================
+   LIGHT BACKGROUND
+   ========================================================= */
+
+html.light body::before {
+  background:
+    radial-gradient(
+      circle at 8% 12%,
+      rgba(139, 92, 246, 0.16),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 92% 82%,
+      rgba(99, 102, 241, 0.11),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(255, 255, 255, 0.85),
+      transparent 55%
+    );
+}
+
+/* =========================================================
+   PREMIUM GLASS
+   ========================================================= */
+
+.glass {
+  position: relative;
+
+  background: var(--glass);
+
+  border: 1px solid var(--glass-border);
+
+  backdrop-filter:
+    blur(30px)
+    saturate(150%);
+
+  -webkit-backdrop-filter:
+    blur(30px)
+    saturate(150%);
+
+  box-shadow:
+    var(--shadow),
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.025);
+
+  transition:
+    background-color 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+
+/* =========================================================
+   GLASS TOP REFLECTION
+   ========================================================= */
+
+.glass::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--glass-highlight),
+      transparent
+    );
+
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* =========================================================
+   GLASS HOVER
+   ========================================================= */
+
+.glass:hover {
+  background: var(--glass-hover);
+
+  border-color:
+    rgba(139, 92, 246, 0.22);
+
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.35),
+    0 0 45px rgba(139, 92, 246, 0.07),
+    inset 0 1px 0 var(--glass-highlight);
+}
+
+/* =========================================================
+   LIGHT GLASS HOVER
+   ========================================================= */
+
+html.light .glass:hover {
+  border-color:
+    rgba(124, 58, 237, 0.18);
+
+  box-shadow:
+    0 30px 80px rgba(74, 56, 110, 0.14),
+    0 0 45px rgba(124, 58, 237, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background:
+    rgba(139, 92, 246, 0.35);
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  border-radius: 999px;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background:
+    rgba(15, 23, 42, 0.15);
+}
+
+html.light ::-webkit-scrollbar-track {
+  background:
+    rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================================
+   MOBILE CONTENT SAFETY
+   ========================================================= */
+
+@media (max-width: 640px) {
+  main {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .glass {
+    max-width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE DEVICES
+   ========================================================= */
+
+@media (max-width: 480px) {
+  body {
+    min-width: 0;
+  }
+}
+
+/* =========================================================
+   THEME TRANSITIONS
+   ========================================================= */
+
+html,
+body,
+.glass {
+  transition:
+    background-color 300ms ease,
+    color 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
