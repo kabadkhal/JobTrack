@@ -72,13 +72,13 @@ export default function AdminStats() {
         {cards.map((card) => (
           <div
             key={card.title}
-            className="animate-pulse rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl"
+            className="animate-pulse rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 backdrop-blur-xl"
           >
-            <div className="h-4 w-24 rounded bg-white/10" />
+            <div className="h-4 w-24 rounded bg-[color:var(--border)]" />
 
-            <div className="mt-5 h-10 w-16 rounded bg-white/10" />
+            <div className="mt-5 h-10 w-16 rounded bg-[color:var(--border)]" />
 
-            <div className="mt-3 h-3 w-40 rounded bg-white/10" />
+            <div className="mt-3 h-3 w-40 rounded bg-[color:var(--border)]" />
           </div>
         ))}
       </section>
@@ -87,8 +87,8 @@ export default function AdminStats() {
 
   if (error) {
     return (
-      <div className="rounded-3xl border border-red-400/20 bg-red-400/5 p-6">
-        <p className="text-sm text-red-300">{error}</p>
+      <div className="rounded-3xl border border-[color:var(--danger-border)] bg-[color:var(--danger-soft)] p-6">
+        <p className="text-sm text-[color:var(--danger)]">{error}</p>
       </div>
     );
   }
@@ -98,9 +98,9 @@ export default function AdminStats() {
       {cards.map((card) => (
         <div
           key={card.title}
-          className="group rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-xl backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/20 hover:bg-white/[0.06]"
+          className="group rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-xl backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[color:var(--accent)] hover:bg-[color:var(--surface-hover)]"
         >
-          <p className="text-sm font-medium text-slate-400">
+          <p className="text-sm font-medium text-[color:var(--text-secondary)]">
             {card.title}
           </p>
 
@@ -108,7 +108,7 @@ export default function AdminStats() {
             {card.value ?? 0}
           </p>
 
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-[color:var(--text-muted)]">
             {card.description}
           </p>
         </div>

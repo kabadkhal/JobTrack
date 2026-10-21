@@ -29,7 +29,8 @@ type ProfilePosition = {
 export default function Navbar() {
   const { data: session } = useSession();
 
-  const [visible, setVisible] = useState(true);
+  // The navbar is always visible (fixed while scrolling)
+  const visible = true;
   const [profileOpen, setProfileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -39,7 +40,7 @@ export default function Navbar() {
       left: 0,
     });
 
-  const lastScrollY = useRef(0);
+  
 
   const profileButtonRef =
     useRef<HTMLButtonElement>(null);
@@ -54,45 +55,6 @@ export default function Navbar() {
     setMounted(true);
   }, []);
 
-  /*
-   * ============================================================
-   * HIDE NAVBAR ON SCROLL DOWN
-   * ============================================================
-   */
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY <= 20) {
-        setVisible(true);
-      } else if (
-        currentScrollY > lastScrollY.current
-      ) {
-        setVisible(false);
-        setProfileOpen(false);
-      } else {
-        setVisible(true);
-      }
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener(
-      "scroll",
-      handleScroll,
-      {
-        passive: true,
-      }
-    );
-
-    return () => {
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
-    };
-  }, []);
 
   /*
    * ============================================================
@@ -266,12 +228,12 @@ export default function Navbar() {
         gap-2
         rounded-xl
         border
-        border-white/10
-        bg-white/5
+        border-[color:var(--border)]
+        bg-[color:var(--surface)]
         px-2.5
         transition-all
         duration-200
-        hover:bg-white/10
+        hover:bg-[color:var(--surface-hover)]
       "
     >
       {/* Avatar */}
@@ -396,7 +358,7 @@ export default function Navbar() {
             w-full
             cursor-default
             border-0
-            bg-black/35
+            bg-[color:var(--overlay)]
             p-0
             backdrop-blur-md
           "
@@ -452,20 +414,22 @@ export default function Navbar() {
             }
             aria-label="Close profile menu"
             className="
+              relative
               flex
               h-11
               shrink-0
               items-center
-              justify-center
+              gap-2
               rounded-xl
               border
-              border-white/10
-              bg-white/10
+              border-[color:var(--border)]
+              bg-[color:var(--surface-hover)]
               px-2.5
               shadow-xl
               backdrop-blur-xl
             "
           >
+            {/* Avatar */}
             <div
               className="
                 flex
@@ -488,11 +452,42 @@ export default function Navbar() {
               {avatarLetter}
             </div>
 
+            {/* Desktop user information (same as the real button) */}
+            <div
+              className="
+                hidden
+                max-w-[135px]
+                min-w-0
+                text-left
+                xl:block
+              "
+            >
+              <p className="truncate text-xs font-medium">
+                {userName}
+              </p>
+
+              <p
+                className="
+                  truncate
+                  text-[10px]
+                "
+                style={{
+                  color:
+                    "var(--text-muted)",
+                }}
+              >
+                {userEmail}
+              </p>
+            </div>
+
+            {/* Chevron (same visibility as the real button) */}
             <ChevronDown
               size={15}
               className="
-                ml-2
+                hidden
+                shrink-0
                 rotate-180
+                xl:block
               "
               style={{
                 color:
@@ -549,7 +544,7 @@ export default function Navbar() {
               "var(--glass-border)",
 
             boxShadow:
-              "0 28px 80px rgba(0,0,0,0.45)",
+              "var(--shadow)",
           }}
           onClick={(event) =>
             event.stopPropagation()
@@ -647,7 +642,7 @@ export default function Navbar() {
               text-left
               text-sm
               transition-colors
-              hover:bg-white/5
+              hover:bg-[color:var(--surface-hover)]
             "
             style={{
               color:
@@ -693,7 +688,7 @@ export default function Navbar() {
               text-left
               text-sm
               transition-colors
-              hover:bg-white/5
+              hover:bg-[color:var(--surface-hover)]
             "
             style={{
               borderColor:
@@ -761,6 +756,7 @@ export default function Navbar() {
             <div
               className="
                 glass
+                navbar-glass
                 relative
                 overflow-visible
                 rounded-2xl
@@ -802,11 +798,11 @@ export default function Navbar() {
                     justify-center
                     rounded-xl
                     border
-                    border-white/10
-                    bg-white/5
+                    border-[color:var(--border)]
+                    bg-[color:var(--surface)]
                     transition-all
                     duration-200
-                    hover:bg-white/10
+                    hover:bg-[color:var(--surface-hover)]
                     lg:hidden
                   "
                   style={{

@@ -62,9 +62,9 @@ export default function AdminUsers() {
   }
 
   return (
-    <section className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur-xl">
+    <section className="mt-8 rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-2xl backdrop-blur-xl">
       <div className="mb-6">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-400">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-[color:var(--accent)]">
           User Management
         </p>
 
@@ -72,7 +72,7 @@ export default function AdminUsers() {
           Registered Users
         </h2>
 
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-[color:var(--text-secondary)]">
           View the accounts registered on JobTrack.
         </p>
       </div>
@@ -82,21 +82,21 @@ export default function AdminUsers() {
           {[1, 2, 3].map((item) => (
             <div
               key={item}
-              className="h-20 animate-pulse rounded-2xl border border-white/10 bg-white/[0.03]"
+              className="h-20 animate-pulse rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)]"
             />
           ))}
         </div>
       )}
 
       {!loading && error && (
-        <div className="rounded-2xl border border-red-400/20 bg-red-400/5 p-5">
-          <p className="text-sm text-red-300">{error}</p>
+        <div className="rounded-2xl border border-[color:var(--danger-border)] bg-[color:var(--danger-soft)] p-5">
+          <p className="text-sm text-[color:var(--danger)]">{error}</p>
         </div>
       )}
 
       {!loading && !error && users.length === 0 && (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center">
-          <p className="text-sm text-slate-400">
+        <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 text-center">
+          <p className="text-sm text-[color:var(--text-secondary)]">
             No registered users found.
           </p>
         </div>
@@ -105,49 +105,49 @@ export default function AdminUsers() {
       {!loading && !error && users.length > 0 && (
         <div className="overflow-x-auto">
           <div className="min-w-[720px]">
-            <div className="grid grid-cols-[1.5fr_2fr_1fr_1.2fr] gap-4 border-b border-white/10 px-4 pb-3 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <div className="grid grid-cols-[1.5fr_2fr_1fr_1.2fr] gap-4 border-b border-[color:var(--border)] px-4 pb-3 text-xs font-medium uppercase tracking-wider text-[color:var(--text-muted)]">
               <span>User</span>
               <span>Email</span>
               <span>Role</span>
               <span>Joined</span>
             </div>
 
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-[color:var(--border-soft)]">
               {users.map((user) => {
                 const isAdmin = user.role === "admin";
 
                 return (
                   <div
                     key={user.id}
-                    className="grid grid-cols-[1.5fr_2fr_1fr_1.2fr] items-center gap-4 px-4 py-4 transition hover:bg-white/[0.03]"
+                    className="grid grid-cols-[1.5fr_2fr_1fr_1.2fr] items-center gap-4 px-4 py-4 transition hover:bg-[color:var(--surface-hover)]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05]">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)]">
                         {isAdmin ? (
                           <ShieldCheck
                             size={18}
-                            className="text-cyan-400"
+                            className="text-[color:var(--accent)]"
                           />
                         ) : (
                           <UserRound
                             size={18}
-                            className="text-slate-400"
+                            className="text-[color:var(--text-secondary)]"
                           />
                         )}
                       </div>
 
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-white">
+                        <p className="truncate font-medium text-[color:var(--text-primary)]">
                           {user.name || "Unnamed User"}
                         </p>
 
-                        <p className="truncate text-xs text-slate-500">
+                        <p className="truncate text-xs text-[color:var(--text-muted)]">
                           ID: {user.id}
                         </p>
                       </div>
                     </div>
 
-                    <p className="truncate text-sm text-slate-300">
+                    <p className="truncate text-sm text-[color:var(--text-secondary)]">
                       {user.email}
                     </p>
 
@@ -155,15 +155,15 @@ export default function AdminUsers() {
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
                           isAdmin
-                            ? "bg-cyan-400/10 text-cyan-300"
-                            : "bg-white/[0.06] text-slate-300"
+                            ? "bg-[color:var(--accent-soft)] text-[color:var(--accent)]"
+                            : "bg-[color:var(--surface-hover)] text-[color:var(--text-secondary)]"
                         }`}
                       >
                         {user.role}
                       </span>
                     </div>
 
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-[color:var(--text-secondary)]">
                       {formatDate(user.createdAt)}
                     </p>
                   </div>

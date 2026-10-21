@@ -27,7 +27,7 @@ export default function ThemeSwitcher() {
           ? "Switch to light theme"
           : "Switch to dark theme"
       }
-      className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 transition-all duration-200 hover:scale-105 hover:bg-white/10"
+      className="flex h-11 w-11 items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] transition-all duration-200 hover:scale-105 hover:bg-[color:var(--surface-hover)]"
       style={{
         color: "var(--text-secondary)",
       }}

@@ -191,7 +191,7 @@ export default function SettingsPage() {
   if (status === "loading") {
     return (
       <main
-        className="min-h-screen px-4 pb-12 pt-24 sm:px-6 lg:px-8"
+        className="min-h-screen px-4 pb-12 sm:px-6 lg:px-8"
         style={{
           color: "var(--text-primary)",
         }}
@@ -207,7 +207,7 @@ export default function SettingsPage() {
 
   return (
     <main
-      className="min-h-screen px-4 pb-12 pt-24 sm:px-6 lg:px-8"
+      className="min-h-screen px-4 pb-12 sm:px-6 lg:px-8"
       style={{
         color: "var(--text-primary)",
       }}

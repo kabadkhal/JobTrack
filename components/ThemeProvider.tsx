@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -14,62 +15,74 @@ type Theme = "dark" | "light";
 interface ThemeContextValue {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "dark" | "light";
+  resolvedTheme: Theme;
 }
 
-const ThemeContext = createContext<
-  ThemeContextValue | undefined
->(undefined);
+const STORAGE_KEY = "jobtrack-theme";
+
+const ThemeContext = createContext<ThemeContextValue | undefined>(
+  undefined
+);
 
 export default function ThemeProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  const [theme, setThemeState] =
-    useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("dark");
 
-  const [resolvedTheme, setResolvedTheme] =
-    useState<"dark" | "light">("dark");
+  // Becomes true once the saved/system theme has been read,
+  // so we never overwrite the class set by the <head> script
+  // with the default "dark" (this caused the dark flash).
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const storedTheme =
-      localStorage.getItem("jobtrack-theme");
+    let initial: Theme = "dark";
 
-    if (
-      storedTheme === "dark" ||
-      storedTheme === "light"
-    ) {
-      setThemeState(storedTheme);
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+
+      if (stored === "dark" || stored === "light") {
+        initial = stored;
+      } else if (
+        window.matchMedia("(prefers-color-scheme: light)").matches
+      ) {
+        initial = "light";
+      }
+    } catch {
+      // localStorage unavailable (private mode, etc.)
     }
+
+    setThemeState(initial);
+    setReady(true);
   }, []);
 
   useEffect(() => {
-    const root =
-      document.documentElement;
+    if (!ready) return;
+
+    const root = document.documentElement;
 
     root.classList.remove("dark", "light");
     root.classList.add(theme);
+  }, [theme, ready]);
 
-    setResolvedTheme(theme);
-  }, [theme]);
-
-  const setTheme = (newTheme: Theme) => {
-    localStorage.setItem(
-      "jobtrack-theme",
-      newTheme
-    );
+  const setTheme = useCallback((newTheme: Theme) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, newTheme);
+    } catch {
+      // ignore
+    }
 
     setThemeState(newTheme);
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
       theme,
       setTheme,
-      resolvedTheme,
+      resolvedTheme: theme,
     }),
-    [theme, resolvedTheme]
+    [theme, setTheme]
   );
 
   return (
@@ -80,13 +93,10 @@ export default function ThemeProvider({
 }
 
 export function useTheme() {
-  const context =
-    useContext(ThemeContext);
+  const context = useContext(ThemeContext);
 
   if (!context) {
-    throw new Error(
-      "useTheme must be used inside ThemeProvider"
-    );
+    throw new Error("useTheme must be used inside ThemeProvider");
   }
 
   return context;

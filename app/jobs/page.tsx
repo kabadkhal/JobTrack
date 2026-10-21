@@ -411,9 +411,6 @@ export default function JobsPage() {
     <>
       <main
         className="min-h-screen px-4 pb-10 sm:px-6 lg:px-8"
-        style={{
-          paddingTop: "108px",
-        }}
       >
         <div className="mx-auto w-full max-w-[1600px]">
           {/* Header */}
@@ -1042,7 +1039,7 @@ export default function JobsPage() {
                             onClick={() =>
                               setSelectedJob(job)
                             }
-                            className="rounded-xl p-2.5 transition hover:scale-105 hover:bg-white/5"
+                            className="rounded-xl p-2.5 transition hover:scale-105 hover:bg-[color:var(--surface-hover)]"
                             style={{
                               color:
                                 "var(--text-secondary)",
@@ -1060,7 +1057,7 @@ export default function JobsPage() {
                             onClick={() =>
                               handleDelete(job.id)
                             }
-                            className="rounded-xl p-2.5 transition hover:scale-105 hover:bg-white/5"
+                            className="rounded-xl p-2.5 transition hover:scale-105 hover:bg-[color:var(--surface-hover)]"
                             style={{
                               color:
                                 "var(--text-muted)",

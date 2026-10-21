@@ -286,7 +286,7 @@ export default function CompaniesPage() {
     return (
       <main
         className="min-h-screen px-4 pb-12 sm:px-6 lg:px-8"
-        style={{ paddingTop: "108px" }}
+        
       >
         <div className="mx-auto w-full max-w-[1600px] animate-pulse">
           <div
@@ -342,7 +342,7 @@ export default function CompaniesPage() {
     return (
       <main
         className="min-h-screen px-4 pb-12 sm:px-6 lg:px-8"
-        style={{ paddingTop: "108px" }}
+        
       >
         <div className="mx-auto w-full max-w-[1600px]">
           <button
@@ -414,7 +414,7 @@ export default function CompaniesPage() {
     <>
       <main
         className="min-h-screen px-4 pb-12 sm:px-6 lg:px-8"
-        style={{ paddingTop: "108px" }}
+        
       >
         <div className="mx-auto w-full max-w-[1600px]">
           {/* Header */}
@@ -982,7 +982,7 @@ function CompanyDetailsModal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-[color:var(--overlay)] p-4 backdrop-blur-md"
       onMouseDown={(event) => {
         if (
           event.target === event.currentTarget

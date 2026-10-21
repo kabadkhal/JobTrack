@@ -173,11 +173,7 @@ export default function RecentApplications() {
                   duration: 0.35,
                   delay: index * 0.06,
                 }}
-                whileHover={{
-                  backgroundColor:
-                    "rgba(255, 255, 255, 0.035)",
-                }}
-                className="flex items-center gap-4 border-b px-5 py-4 last:border-b-0"
+                className="flex items-center gap-4 border-b px-5 py-4 transition-colors last:border-b-0 hover:bg-[color:var(--surface-hover)]"
                 style={{
                   borderColor: "var(--glass-border)",
                 }}

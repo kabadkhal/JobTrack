@@ -401,7 +401,7 @@ export default function Sidebar() {
             fixed
             inset-0
             z-[55]
-            bg-black/60
+            bg-[color:var(--overlay)]
             backdrop-blur-md
             lg:hidden
           "
@@ -516,7 +516,7 @@ export default function Sidebar() {
               rounded-xl
               border
               transition
-              hover:bg-white/10
+              hover:bg-[color:var(--surface-hover)]
             "
             style={{
               borderColor:

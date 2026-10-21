@@ -13,14 +13,18 @@ import {
 import {
   AnimatePresence,
   motion,
+  useDragControls,
 } from "framer-motion";
 
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+
+import { createPortal } from "react-dom";
 
 import { useRouter } from "next/navigation";
 
@@ -254,41 +258,123 @@ export default function NotificationBell() {
   const [open, setOpen] =
     useState(false);
 
-  const wrapperRef =
-    useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] =
+    useState(false);
+
+  const [isMobile, setIsMobile] =
+    useState(false);
+
+  const dragControls =
+    useDragControls();
+
+  const bellRef =
+    useRef<HTMLButtonElement>(null);
+
+  const [position, setPosition] =
+    useState({
+      top: 88,
+      left: 16,
+      maxHeight: 560,
+    });
 
   const notifications = useMemo(
     () => createNotifications(jobs),
     [jobs]
   );
 
-  /* ---------------- Outside Click ---------------- */
+  /* ---------------- Client Mount ---------------- */
 
   useEffect(() => {
-    const handleOutside = (
-      event: MouseEvent
-    ) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(
-          event.target as Node
-        )
-      ) {
-        setOpen(false);
-      }
-    };
+    setMounted(true);
+  }, []);
 
-    if (open) {
-      document.addEventListener(
-        "mousedown",
-        handleOutside
-      );
-    }
+  /* ---------------- Mobile Detection ---------------- */
+
+  useEffect(() => {
+    const query = window.matchMedia(
+      "(max-width: 639px)"
+    );
+
+    const update = () =>
+      setIsMobile(query.matches);
+
+    update();
+
+    query.addEventListener(
+      "change",
+      update
+    );
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleOutside
+      query.removeEventListener(
+        "change",
+        update
+      );
+    };
+  }, []);
+
+  /* ---------------- Dropdown Position ----------------
+   *
+   * On tablets and desktops the panel is placed directly
+   * under the real bell button (measured, not hard-coded),
+   * so it lines up even when the navbar has two rows.
+   */
+
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    const update = () => {
+      const button = bellRef.current;
+
+      if (!button) return;
+
+      const rect =
+        button.getBoundingClientRect();
+
+      const width = Math.min(
+        380,
+        window.innerWidth - 24
+      );
+
+      const gap = 10;
+
+      let left = rect.right - width;
+
+      if (left < 12) {
+        left = 12;
+      }
+
+      if (
+        left + width >
+        window.innerWidth - 12
+      ) {
+        left =
+          window.innerWidth - width - 12;
+      }
+
+      const top = rect.bottom + gap;
+
+      setPosition({
+        top,
+        left,
+        maxHeight: Math.min(
+          560,
+          window.innerHeight - top - 16
+        ),
+      });
+    };
+
+    update();
+
+    window.addEventListener(
+      "resize",
+      update
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        update
       );
     };
   }, [open]);
@@ -351,13 +437,13 @@ export default function NotificationBell() {
   }
 
   return (
-    <div
-      ref={wrapperRef}
-      className="relative shrink-0"
-    >
-      {/* Bell Button */}
+    <>
+      {/* ======================================================
+          BELL BUTTON
+      ====================================================== */}
 
       <button
+        ref={bellRef}
         type="button"
         onClick={() =>
           setOpen((current) => !current)
@@ -369,14 +455,15 @@ export default function NotificationBell() {
           flex
           h-11
           w-11
+          shrink-0
           items-center
           justify-center
           rounded-xl
           border
-          border-white/10
-          bg-white/5
+          border-[color:var(--border)]
+          bg-[color:var(--surface)]
           transition
-          hover:bg-white/10
+          hover:bg-[color:var(--surface-hover)]
         "
         style={{
           color: "var(--text-secondary)",
@@ -408,262 +495,297 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* Backdrop */}
+      {/* ======================================================
+          PORTAL
 
-      <AnimatePresence>
-        {open && (
-          <motion.button
-            type="button"
-            aria-label="Close notifications"
-            onClick={() => setOpen(false)}
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-            }}
-            className="
-              fixed
-              inset-0
-              z-[80]
-              bg-black/55
-              backdrop-blur-md
-            "
-          />
-        )}
-      </AnimatePresence>
+          Rendered on document.body so the navbar's frosted
+          glass can't break the fixed positioning.
+      ====================================================== */}
 
-      {/* Notification Panel */}
+      {mounted &&
+        createPortal(
+          <>
+            {/* Backdrop */}
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: -10,
-              scale: 0.97,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-            }}
-            exit={{
-              opacity: 0,
-              y: -10,
-              scale: 0.97,
-            }}
-            transition={{
-              duration: 0.18,
-            }}
-            className="
-              glass
-              fixed
-              left-3
-              right-3
-              top-[76px]
-              z-[90]
-              overflow-hidden
-              rounded-2xl
-              sm:left-auto
-              sm:right-4
-              sm:top-[88px]
-              sm:w-[360px]
-            "
-            style={{
-              boxShadow:
-                "0 28px 80px rgba(0,0,0,0.55)",
-              border:
-                "1px solid var(--glass-border)",
-            }}
-          >
-            {/* Header */}
-
-            <div
-              className="
-                flex
-                items-center
-                justify-between
-                border-b
-                px-4
-                py-4
-              "
-              style={{
-                borderColor:
-                  "var(--glass-border)",
-              }}
-            >
-              <div>
-                <h3
-                  className="text-sm font-semibold"
-                  style={{
-                    color:
-                      "var(--text-primary)",
-                  }}
-                >
-                  Notifications
-                </h3>
-
-                <p
-                  className="
-                    mt-0.5
-                    text-xs
-                  "
-                  style={{
-                    color:
-                      "var(--text-muted)",
-                  }}
-                >
-                  Your latest JobTrack updates
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {notifications.length > 0 && (
-                  <span
-                    className="
-                      rounded-full
-                      px-2.5
-                      py-1
-                      text-xs
-                    "
-                    style={{
-                      background:
-                        "var(--accent-soft)",
-                      color:
-                        "var(--accent)",
-                    }}
-                  >
-                    {notifications.length}
-                  </span>
-                )}
-
-                <button
+            <AnimatePresence>
+              {open && (
+                <motion.button
+                  key="notification-backdrop"
                   type="button"
-                  onClick={() => setOpen(false)}
-                  className="
-                    flex
-                    h-8
-                    w-8
-                    items-center
-                    justify-center
-                    rounded-lg
-                    hover:bg-white/10
-                  "
-                  style={{
-                    color:
-                      "var(--text-secondary)",
+                  aria-label="Close notifications"
+                  onClick={() =>
+                    setOpen(false)
+                  }
+                  initial={{
+                    opacity: 0,
                   }}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* Empty State */}
-
-            {notifications.length === 0 ? (
-              <div
-                className="
-                  px-6
-                  py-10
-                  text-center
-                "
-              >
-                <div
+                  animate={{
+                    opacity: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                  }}
+                  transition={{
+                    duration: 0.18,
+                  }}
                   className="
-                    mx-auto
-                    mb-3
+                    fixed
+                    inset-0
+                    z-[210]
+                    h-full
+                    w-full
+                    cursor-default
+                    border-0
+                    bg-[color:var(--overlay)]
+                    p-0
+                    backdrop-blur-sm
+                  "
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Panel: bottom sheet on phones, dropdown on larger screens */}
+
+            <AnimatePresence>
+              {open && (
+                <motion.div
+                  key="notification-panel"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Notifications"
+                  initial={
+                    isMobile
+                      ? { y: "100%" }
+                      : {
+                          opacity: 0,
+                          y: -10,
+                          scale: 0.97,
+                        }
+                  }
+                  animate={
+                    isMobile
+                      ? { y: 0 }
+                      : {
+                          opacity: 1,
+                          y: 0,
+                          scale: 1,
+                        }
+                  }
+                  exit={
+                    isMobile
+                      ? { y: "100%" }
+                      : {
+                          opacity: 0,
+                          y: -10,
+                          scale: 0.97,
+                        }
+                  }
+                  transition={
+                    isMobile
+                      ? {
+                          type: "spring",
+                          damping: 32,
+                          stiffness: 320,
+                        }
+                      : {
+                          duration: 0.18,
+                        }
+                  }
+                  drag={
+                    isMobile ? "y" : false
+                  }
+                  dragControls={
+                    dragControls
+                  }
+                  dragListener={false}
+                  dragConstraints={{
+                    top: 0,
+                    bottom: 0,
+                  }}
+                  dragElastic={{
+                    top: 0,
+                    bottom: 0.6,
+                  }}
+                  onDragEnd={(_, info) => {
+                    if (
+                      info.offset.y > 100 ||
+                      info.velocity.y > 600
+                    ) {
+                      setOpen(false);
+                    }
+                  }}
+                  className="
+                    fixed
+                    inset-x-0
+                    bottom-0
+                    z-[220]
                     flex
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-                    rounded-2xl
+                    max-h-[85dvh]
+                    flex-col
+                    overflow-hidden
+                    rounded-t-3xl
+                    border
+                    border-b-0
+                    sm:inset-x-auto
+                    sm:bottom-auto
+                    sm:w-[380px]
+                    sm:rounded-2xl
+                    sm:border-b
                   "
                   style={{
                     background:
-                      "var(--accent-soft)",
-                    color:
-                      "var(--accent)",
+                      "var(--background-secondary)",
+                    borderColor:
+                      "var(--glass-border)",
+                    boxShadow:
+                      "var(--shadow)",
+                    ...(isMobile
+                      ? {}
+                      : {
+                          top: position.top,
+                          left: position.left,
+                          maxHeight:
+                            position.maxHeight,
+                        }),
                   }}
                 >
-                  <Bell size={21} />
-                </div>
+                  {/* Drag handle (phones only) */}
 
-                <h4
-                  className="text-sm font-medium"
-                  style={{
-                    color:
-                      "var(--text-primary)",
-                  }}
-                >
-                  You're all caught up
-                </h4>
-
-                <p
-                  className="
-                    mt-1
-                    text-xs
-                  "
-                  style={{
-                    color:
-                      "var(--text-secondary)",
-                  }}
-                >
-                  New interviews and
-                  application updates
-                  will appear here.
-                </p>
-              </div>
-            ) : (
-              /* Notification List */
-
-              <div
-                className="
-                  max-h-[420px]
-                  overflow-y-auto
-                "
-              >
-                {notifications.map(
-                  (notification) => (
-                    <button
-                      key={notification.id}
-                      type="button"
-                      onClick={() =>
-                        openJob(
-                          notification.jobId
-                        )
-                      }
+                  <div
+                    className="
+                      flex
+                      shrink-0
+                      cursor-grab
+                      touch-none
+                      justify-center
+                      py-3
+                      sm:hidden
+                    "
+                    onPointerDown={(event) =>
+                      dragControls.start(event)
+                    }
+                  >
+                    <span
                       className="
-                        flex
-                        w-full
-                        gap-3
-                        border-b
-                        p-4
-                        text-left
-                        last:border-b-0
-                        hover:bg-white/5
+                        h-1.5
+                        w-10
+                        rounded-full
                       "
                       style={{
-                        borderColor:
-                          "var(--glass-border)",
+                        background:
+                          "var(--border)",
                       }}
-                    >
-                      {/* Icon */}
+                    />
+                  </div>
 
-                      <div
+                  {/* Header */}
+
+                  <div
+                    className="
+                      flex
+                      shrink-0
+                      items-center
+                      justify-between
+                      border-b
+                      px-4
+                      pb-4
+                      sm:pt-4
+                    "
+                    style={{
+                      borderColor:
+                        "var(--glass-border)",
+                    }}
+                  >
+                    <div>
+                      <h3
+                        className="text-base font-semibold sm:text-sm"
+                        style={{
+                          color:
+                            "var(--text-primary)",
+                        }}
+                      >
+                        Notifications
+                      </h3>
+
+                      <p
+                        className="
+                          mt-0.5
+                          text-xs
+                        "
+                        style={{
+                          color:
+                            "var(--text-muted)",
+                        }}
+                      >
+                        Your latest JobTrack updates
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {notifications.length > 0 && (
+                        <span
+                          className="
+                            rounded-full
+                            px-2.5
+                            py-1
+                            text-xs
+                          "
+                          style={{
+                            background:
+                              "var(--accent-soft)",
+                            color:
+                              "var(--accent)",
+                          }}
+                        >
+                          {notifications.length}
+                        </span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpen(false)
+                        }
+                        aria-label="Close notifications"
                         className="
                           flex
                           h-9
                           w-9
-                          shrink-0
                           items-center
                           justify-center
-                          rounded-xl
+                          rounded-lg
+                          hover:bg-[color:var(--surface-hover)]
+                        "
+                        style={{
+                          color:
+                            "var(--text-secondary)",
+                        }}
+                      >
+                        <X size={17} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Empty State */}
+
+                  {notifications.length === 0 ? (
+                    <div
+                      className="
+                        px-6
+                        py-10
+                        text-center
+                      "
+                    >
+                      <div
+                        className="
+                          mx-auto
+                          mb-3
+                          flex
+                          h-12
+                          w-12
+                          items-center
+                          justify-center
+                          rounded-2xl
                         "
                         style={{
                           background:
@@ -672,134 +794,226 @@ export default function NotificationBell() {
                             "var(--accent)",
                         }}
                       >
-                        <NotificationIcon
-                          type={
-                            notification.type
-                          }
-                        />
+                        <Bell size={21} />
                       </div>
 
-                      {/* Content */}
+                      <h4
+                        className="text-sm font-medium"
+                        style={{
+                          color:
+                            "var(--text-primary)",
+                        }}
+                      >
+                        You&apos;re all caught up
+                      </h4>
 
-                      <div className="min-w-0 flex-1">
-                        <div
-                          className="
-                            flex
-                            items-start
-                            justify-between
-                            gap-2
-                          "
-                        >
-                          <p
-                            className="
-                              text-sm
-                              font-medium
-                            "
-                            style={{
-                              color:
-                                "var(--text-primary)",
-                            }}
-                          >
-                            {
-                              notification.title
+                      <p
+                        className="
+                          mx-auto
+                          mt-1
+                          max-w-[260px]
+                          text-xs
+                          leading-5
+                        "
+                        style={{
+                          color:
+                            "var(--text-secondary)",
+                        }}
+                      >
+                        New interviews and
+                        application updates
+                        will appear here.
+                      </p>
+                    </div>
+                  ) : (
+                    /* Notification List */
+
+                    <div
+                      className="
+                        min-h-0
+                        flex-1
+                        overflow-y-auto
+                        overscroll-contain
+                      "
+                    >
+                      {notifications.map(
+                        (notification) => (
+                          <button
+                            key={notification.id}
+                            type="button"
+                            onClick={() =>
+                              openJob(
+                                notification.jobId
+                              )
                             }
-                          </p>
-
-                          <ChevronRight
-                            size={15}
-                            className="shrink-0"
-                            style={{
-                              color:
-                                "var(--text-muted)",
-                            }}
-                          />
-                        </div>
-
-                        <p
-                          className="
-                            mt-1
-                            text-xs
-                            leading-5
-                          "
-                          style={{
-                            color:
-                              "var(--text-secondary)",
-                          }}
-                        >
-                          {
-                            notification.description
-                          }
-                        </p>
-
-                        {notification.type ===
-                          "interview" && (
-                          <div
                             className="
-                              mt-2
                               flex
-                              items-center
-                              gap-1
-                              text-[11px]
+                              w-full
+                              gap-3
+                              border-b
+                              p-4
+                              text-left
+                              last:border-b-0
+                              hover:bg-[color:var(--surface-hover)]
                             "
                             style={{
-                              color:
-                                "var(--accent)",
+                              borderColor:
+                                "var(--glass-border)",
                             }}
                           >
-                            <Clock size={12} />
-                            Interview scheduled
-                          </div>
-                        )}
-                      </div>
+                            {/* Icon */}
+
+                            <div
+                              className="
+                                flex
+                                h-9
+                                w-9
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-xl
+                              "
+                              style={{
+                                background:
+                                  "var(--accent-soft)",
+                                color:
+                                  "var(--accent)",
+                              }}
+                            >
+                              <NotificationIcon
+                                type={
+                                  notification.type
+                                }
+                              />
+                            </div>
+
+                            {/* Content */}
+
+                            <div className="min-w-0 flex-1">
+                              <div
+                                className="
+                                  flex
+                                  items-start
+                                  justify-between
+                                  gap-2
+                                "
+                              >
+                                <p
+                                  className="
+                                    text-sm
+                                    font-medium
+                                  "
+                                  style={{
+                                    color:
+                                      "var(--text-primary)",
+                                  }}
+                                >
+                                  {
+                                    notification.title
+                                  }
+                                </p>
+
+                                <ChevronRight
+                                  size={15}
+                                  className="shrink-0"
+                                  style={{
+                                    color:
+                                      "var(--text-muted)",
+                                  }}
+                                />
+                              </div>
+
+                              <p
+                                className="
+                                  mt-1
+                                  text-xs
+                                  leading-5
+                                "
+                                style={{
+                                  color:
+                                    "var(--text-secondary)",
+                                }}
+                              >
+                                {
+                                  notification.description
+                                }
+                              </p>
+
+                              {notification.type ===
+                                "interview" && (
+                                <div
+                                  className="
+                                    mt-2
+                                    flex
+                                    items-center
+                                    gap-1
+                                    text-[11px]
+                                  "
+                                  style={{
+                                    color:
+                                      "var(--accent)",
+                                  }}
+                                >
+                                  <Clock size={12} />
+                                  Interview scheduled
+                                </div>
+                              )}
+                            </div>
+                          </button>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                  {/* Footer */}
+
+                  <div
+                    className="
+                      shrink-0
+                      border-t
+                      px-4
+                      pt-3
+                    "
+                    style={{
+                      borderColor:
+                        "var(--glass-border)",
+                      paddingBottom:
+                        "max(0.75rem, env(safe-area-inset-bottom))",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false);
+                        router.push("/jobs");
+                      }}
+                      className="
+                        flex
+                        w-full
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        py-2.5
+                        text-xs
+                        font-medium
+                        hover:bg-[color:var(--surface-hover)]
+                      "
+                      style={{
+                        color:
+                          "var(--text-secondary)",
+                      }}
+                    >
+                      View all applications
+                      <ChevronRight size={14} />
                     </button>
-                  )
-                )}
-              </div>
-            )}
-
-            {/* Footer */}
-
-            <div
-              className="
-                border-t
-                px-4
-                py-3
-              "
-              style={{
-                borderColor:
-                  "var(--glass-border)",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  router.push("/jobs");
-                }}
-                className="
-                  flex
-                  w-full
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-xl
-                  py-2.5
-                  text-xs
-                  font-medium
-                  hover:bg-white/5
-                "
-                style={{
-                  color:
-                    "var(--text-secondary)",
-                }}
-              >
-                View all applications
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>,
+          document.body
         )}
-      </AnimatePresence>
-    </div>
+    </>
   );
 }

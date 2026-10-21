@@ -146,7 +146,7 @@ export default function Dashboard() {
   ];
 
   return (
-        <main
+            <main
       className="
         min-h-screen
         w-full
@@ -155,13 +155,9 @@ export default function Dashboard() {
         px-4
         pb-10
 
-        pt-[155px]
-
         sm:px-6
-        sm:pt-[155px]
 
         lg:px-8
-        lg:pt-[96px]
       "
       style={{
         margin: 0,

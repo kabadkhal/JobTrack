@@ -7,8 +7,18 @@
 :root {
   color-scheme: dark;
 
+  --navbar-bg: rgba(14, 16, 24, 0.82);
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-hover: rgba(255, 255, 255, 0.10);
+  --border: rgba(255, 255, 255, 0.10);
+  --border-soft: rgba(255, 255, 255, 0.06);
+  --overlay: rgba(0, 0, 0, 0.60);
+  --danger-soft: rgba(251, 113, 133, 0.10);
+  --danger-border: rgba(251, 113, 133, 0.30);
+
   --background: #05060a;
   --foreground: #ffffff;
+  --background-secondary: #0e1018;
 
   --glass: rgba(255, 255, 255, 0.075);
   --glass-hover: rgba(255, 255, 255, 0.12);
@@ -40,30 +50,40 @@
 html.light {
   color-scheme: light;
 
-  --background: #f5f3ff;
-  --foreground: #171421;
+  --navbar-bg: rgba(255, 255, 255, 0.86);
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-hover: rgba(47, 111, 223, 0.08);
+  --border: rgba(40, 80, 150, 0.16);
+  --border-soft: rgba(40, 80, 150, 0.09);
+  --overlay: rgba(20, 33, 61, 0.28);
+  --danger-soft: rgba(225, 29, 72, 0.08);
+  --danger-border: rgba(225, 29, 72, 0.28);
 
-  --glass: rgba(255, 255, 255, 0.58);
-  --glass-hover: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(91, 72, 130, 0.16);
-  --glass-highlight: rgba(255, 255, 255, 0.75);
+  --background: #f1f7ff;
+  --foreground: #14213d;
+  --background-secondary: #ffffff;
 
-  --text-primary: #171421;
-  --text-secondary: rgba(23, 20, 33, 0.62);
-  --text-muted: rgba(23, 20, 33, 0.42);
+  --glass: rgba(255, 255, 255, 0.64);
+  --glass-hover: rgba(255, 255, 255, 0.80);
+  --glass-border: rgba(40, 80, 150, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.90);
 
-  --accent: #7c3aed;
-  --accent-soft: rgba(124, 58, 237, 0.11);
+  --text-primary: #14213d;
+  --text-secondary: rgba(20, 33, 61, 0.64);
+  --text-muted: rgba(20, 33, 61, 0.44);
 
-  --success: #059669;
+  --accent: #2f6fdf;
+  --accent-soft: rgba(47, 111, 223, 0.12);
+
+  --success: #16a34a;
   --warning: #d97706;
   --danger: #e11d48;
 
   --shadow:
-    0 25px 70px rgba(74, 56, 110, 0.13);
+    0 20px 60px rgba(30, 70, 140, 0.12);
 
   --glow:
-    0 0 100px rgba(124, 58, 237, 0.12);
+    0 0 100px rgba(47, 111, 223, 0.14);
 }
 
 /* =========================================================
@@ -136,19 +156,19 @@ body::before {
 html.light body::before {
   background:
     radial-gradient(
-      circle at 8% 12%,
-      rgba(139, 92, 246, 0.16),
-      transparent 32%
+      circle at 8% 10%,
+      rgba(120, 180, 255, 0.30),
+      transparent 34%
     ),
     radial-gradient(
-      circle at 92% 82%,
-      rgba(99, 102, 241, 0.11),
-      transparent 32%
+      circle at 92% 85%,
+      rgba(130, 225, 215, 0.28),
+      transparent 36%
     ),
     radial-gradient(
       circle at 50% 45%,
-      rgba(255, 255, 255, 0.85),
-      transparent 55%
+      rgba(255, 255, 255, 0.80),
+      transparent 58%
     );
 }
 
@@ -231,11 +251,11 @@ html.light body::before {
 
 html.light .glass:hover {
   border-color:
-    rgba(124, 58, 237, 0.18);
+    rgba(47, 111, 223, 0.28);
 
   box-shadow:
-    0 30px 80px rgba(74, 56, 110, 0.14),
-    0 0 45px rgba(124, 58, 237, 0.06),
+    0 26px 70px rgba(30, 70, 140, 0.13),
+    0 0 40px rgba(120, 180, 255, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
@@ -246,6 +266,11 @@ html.light .glass:hover {
 ::selection {
   background:
     rgba(139, 92, 246, 0.35);
+}
+
+html.light ::selection {
+  background:
+    rgba(47, 111, 223, 0.25);
 }
 
 /* =========================================================
@@ -269,7 +294,7 @@ html.light .glass:hover {
 
 html.light ::-webkit-scrollbar-thumb {
   background:
-    rgba(15, 23, 42, 0.15);
+    rgba(30, 60, 120, 0.20);
 }
 
 html.light ::-webkit-scrollbar-track {

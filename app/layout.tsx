@@ -9,7 +9,10 @@ import AppShell from "@/components/AppShell";
 import { ToastProvider } from "@/components/ToastProvider";
 
 export const metadata: Metadata = {
-  title: "JobTrack",
+  title: {
+    default: "JobTrack",
+    template: "%s | JobTrack",
+  },
   description: "Your career command center",
 };
 
@@ -23,6 +26,13 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("jobtrack-theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}document.documentElement.classList.add(t)}catch(e){document.documentElement.classList.add("dark")}`,
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider>
           <AuthProvider>

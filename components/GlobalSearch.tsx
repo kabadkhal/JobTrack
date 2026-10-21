@@ -202,7 +202,7 @@ export default function GlobalSearch() {
             type="button"
             onClick={handleClear}
             aria-label="Clear search"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition hover:bg-white/10"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition hover:bg-[color:var(--surface-hover)]"
             style={{
               color:
                 "var(--text-muted)",
@@ -316,7 +316,7 @@ export default function GlobalSearch() {
                           job.id
                         )
                       }
-                      className="flex w-full items-center gap-3 border-b px-4 py-3 text-left transition last:border-b-0 hover:bg-white/5"
+                      className="flex w-full items-center gap-3 border-b px-4 py-3 text-left transition last:border-b-0 hover:bg-[color:var(--surface-hover)]"
                       style={{
                         borderColor:
                           "var(--glass-border)",
@@ -411,7 +411,7 @@ export default function GlobalSearch() {
                     "/jobs"
                   );
                 }}
-                className="w-full border-t px-4 py-3 text-center text-xs font-medium transition hover:bg-white/5"
+                className="w-full border-t px-4 py-3 text-center text-xs font-medium transition hover:bg-[color:var(--surface-hover)]"
                 style={{
                   borderColor:
                     "var(--glass-border)",

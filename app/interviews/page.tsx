@@ -187,7 +187,7 @@ export default function InterviewsPage() {
   return (
     <main
       className="min-h-screen px-4 pb-12 sm:px-6 lg:px-8"
-      style={{ paddingTop: "108px" }}
+      
     >
       <div className="mx-auto w-full max-w-[1600px]">
 
